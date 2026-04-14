@@ -1,0 +1,126 @@
+/* ==================== 小羊核心逻辑样式 ==================== */
+:root {
+    --sheep-wool: #ffffff;
+    --sheep-skin: #3e2723;
+    --sheep-leg-back: #2e1a17;
+    --sheep-leg-front: #3e2723;
+    --sheep-eye-bg: #ffffff;
+    --sheep-eye-pupil: #000000;
+    --sheep-mouth: #ffffff;
+    --sheep-shadow-flood: #64748b;
+    --sheep-ground-shadow: #1e293b;
+}
+
+[data-theme="dark"] {
+    --sheep-wool: #a8a6a2;
+    --sheep-skin: #2a1f1d;
+    --sheep-leg-back: #1a1211;
+    --sheep-leg-front: #2a1f1d;
+    --sheep-eye-bg: #d4d4d4;
+    --sheep-eye-pupil: #000000;
+    --sheep-mouth: #d4d4d4;
+    --sheep-shadow-flood: #111111;
+    --sheep-ground-shadow: #0a0a0a;
+}
+
+/* 1. 追踪器：负责全屏幕跟随鼠标 (固定定位) */
+#sheep-tracker {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: -1; /* 置于底层，避免遮挡内容 */
+    pointer-events: none; /* 不阻挡鼠标点击 */
+}
+
+/* 2. 翻转器：负责控制小羊面朝左还是朝右 */
+#sheep-flipper {
+    position: absolute;
+    /* 将中心点放在小羊底部中心 */
+    transform-origin: 40px 80px; 
+    transition: transform 0.2s ease;
+}
+
+/* 3. 蹦跳器：负责处理蹦跳动画 */
+#sheep-bouncer {
+    position: absolute;
+    left: -40px; /* 居中偏移 */
+    top: -80px;  /* 居中偏移 */
+    width: 80px;
+    height: 80px;
+}
+
+/* ==================== SVG 小羊部位动画 ==================== */
+
+/* 走路时腿部摆动 */
+.is-moving .leg1, .is-moving .leg3 {
+    animation: swing 0.25s infinite alternate ease-in-out;
+}
+.is-moving .leg2, .is-moving .leg4 {
+    animation: swing 0.25s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes swing {
+    0% { transform: rotate(-15deg); }
+    100% { transform: rotate(15deg); }
+}
+
+/* 走路时身体蹦跳 */
+.is-moving #sheep-bouncer {
+    animation: bounce 0.25s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5);
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-12px); }
+}
+
+/* 走路时阴影缩放 */
+.is-moving .sheep-shadow {
+    animation: shadow-scale 0.25s infinite alternate cubic-bezier(0.5, 0.05, 1, 0.5);
+}
+
+@keyframes shadow-scale {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0.5); opacity: 0.4; }
+}
+
+/* 走路时耳朵摆动 */
+.is-moving .ear-front-group {
+    animation: ear-flap 0.25s infinite alternate ease-in-out;
+}
+.is-moving .ear-back-group {
+    animation: ear-flap-rev 0.25s infinite alternate ease-in-out;
+}
+@keyframes ear-flap {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(15deg); }
+}
+@keyframes ear-flap-rev {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-15deg); }
+}
+
+/* 停下时的吃草/呼吸动画 */
+.is-idle .head {
+    animation: graze 3s infinite ease-in-out;
+}
+
+@keyframes graze {
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    20% { transform: rotate(15deg) translateY(5px); }
+    50% { transform: rotate(20deg) translateY(6px); }
+    80% { transform: rotate(5deg) translateY(2px); }
+}
+
+/* 眨眼动画 */
+.eye-blink {
+    transform-origin: center;
+    animation: blink 4s infinite;
+}
+
+@keyframes blink {
+    0%, 46%, 48%, 100% { transform: scaleY(1); }
+    47% { transform: scaleY(0.1); }
+}
